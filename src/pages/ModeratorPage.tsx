@@ -1,26 +1,9 @@
 import React, { useState } from "react";
-import { Player } from "../model";
-import { observable, action } from "mobx";
-import { useLocalStore, observer } from "mobx-react-lite";
+import { Player, PageProps } from "../model";
+import { observer } from "mobx-react-lite";
+import "./ModeratorPage.scss";
 
-import "./ModeratorView.scss";
-
-class AppState {
-  @observable players: Player[] = [
-    { id: "12314", displayName: "Frank", score: 300 },
-    { id: "21342", displayName: "Jessica", score: 3400 },
-    { id: "55142", displayName: "Tony", score: 750 }
-  ];
-
-  @action
-  readonly addPointsToPlayer = (player: Player, points: number) => {
-    player.score = (player.score || 0) + points;
-  };
-}
-
-export const ModeratorView = () => {
-  const state = useLocalStore(() => new AppState());
-
+export const ModeratorPage = observer(({ appState: state }: PageProps) => {
   return (
     <>
       <div className="players">
@@ -39,7 +22,7 @@ export const ModeratorView = () => {
       </div>
     </>
   );
-};
+});
 
 interface PlayerScoreProps {
   player: Player;
