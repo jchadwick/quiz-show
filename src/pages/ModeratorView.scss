@@ -1,0 +1,50 @@
+.sounds {
+  flex-direction: row;
+  justify-items: space-between;
+
+  .btn {
+    flex-grow: 1;
+    margin: 0.5em;
+  }
+}
+
+.sounds,
+.players {
+  flex-grow: 1;
+}
+
+.players {
+  flex-direction: column;
+
+  .player {
+    flex-grow: 1;
+    flex-direction: column;
+
+    .name {
+      flex-grow: 1;
+      font-weight: 700;
+      font-size: 200%;
+    }
+
+    .score {
+      flex-direction: column;
+      justify-content: center;
+      width: 30%;
+      color: #1050db;
+      font-weight: 600;
+    }
+
+    .scoreActions {
+      flex-direction: row;
+      justify-content: space-between;
+
+      .btn {
+        min-width: 3em;
+      }
+
+      input {
+        width: 3em;
+      }
+    }
+  }
+}
