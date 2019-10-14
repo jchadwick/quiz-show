@@ -58,6 +58,16 @@ export class AppState {
     );
   }
 
+  @computed get playerCandidates(): Player[] {
+    const specialUserIds = [this.presenter, this.moderator];
+
+    return this.users
+      .filter(x => !!x)
+      .filter(({ displayName }) => !!displayName)
+      .filter(({ id }) => !specialUserIds.includes(id))
+      .filter(({ id }) => id !== this.localPlayer.id);
+  }
+
   @computed
   get mode(): PlayerMode {
     if (this.localPlayer.id === AppState.AnonymousUser.id) {

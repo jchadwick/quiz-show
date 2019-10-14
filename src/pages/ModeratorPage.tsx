@@ -76,25 +76,23 @@ export const ModeratorPage = observer(({ appState }: PageProps) => {
 
 const ModerateRegistrationView = observer(
   ({
-    appState: { users, isPlayer, toggleContestant, startGame }
+    appState: { playerCandidates, isPlayer, toggleContestant, startGame }
   }: PageProps) => (
     <>
       <h3>Select Contestants</h3>
       <ul className="list-group">
-        {users
-          .filter(x => !!x.displayName)
-          .map(user => (
-            <li
-              key={user.id}
-              className={
-                "list-group-item list-group-item-action " +
-                (isPlayer(user) ? " active" : "")
-              }
-              onClick={() => toggleContestant(user)}
-            >
-              {user.displayName} <small>({user.id.substr(0, 5)})</small>
-            </li>
-          ))}
+        {playerCandidates.map(user => (
+          <li
+            key={user.id}
+            className={
+              "list-group-item list-group-item-action " +
+              (isPlayer(user) ? " active" : "")
+            }
+            onClick={() => toggleContestant(user)}
+          >
+            {user.displayName} <small>({user.id.substr(0, 5)})</small>
+          </li>
+        ))}
       </ul>
 
       <div>
