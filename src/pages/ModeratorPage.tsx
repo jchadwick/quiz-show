@@ -2,7 +2,69 @@ import React, { useState } from "react";
 import { Player, PageProps } from "../model";
 import { SoundBoard } from "../sounds/SoundBoard";
 import { observer } from "mobx-react-lite";
-import "./ModeratorPage.scss";
+import { createUseStyles } from "react-jss";
+
+const useStyles = createUseStyles({
+  sounds: {
+    flexGrow: 2,
+    flexDirection: "row",
+    justifyItems: "space-between",
+
+    "& .btn": {
+      flexGrow: 1,
+      margin: "0.5em"
+    }
+  },
+
+  slideButtons: {
+    flexGrow: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: "0.5rem",
+
+    "& .btn": {
+      padding: "1em 1.5em"
+    }
+  },
+
+  players: {
+    flexGrow: 3,
+    flexDirection: "column"
+  },
+
+  player: {
+    flexDirection: "column",
+    marginBottom: "1rem",
+
+    "& .name": {
+      flexGrow: 1,
+      fontWeight: 700,
+      fontSize: "200%"
+    },
+
+    "& .score": {
+      flexDirection: "column",
+      justifyContent: "center",
+      width: "30%",
+      color: "#1050db",
+      fontWeight: 600
+    },
+
+    "& .scoreActions": {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    },
+
+    "& .scoreActions .btn": {
+      padding: "2em 1em",
+      minWidth: "5em"
+    },
+
+    "& .scoreActions input": {
+      width: "3em"
+    }
+  }
+});
 
 export const ModeratorPage = observer(({ appState }: PageProps) => {
   return appState.status === "registering" ? (
@@ -47,32 +109,36 @@ const ModerateRegistrationView = observer(
 const ModerateActiveGameView = observer(
   ({
     appState: { players, addPointsToPlayer, playSound, prevSlide, nextSlide }
-  }: PageProps) => (
-    <>
-      <div className="players">
-        {players.map(player => (
-          <PlayerScore
-            key={player.id}
-            player={player}
-            onAddPoints={addPointsToPlayer}
-          />
-        ))}
-      </div>
+  }: PageProps) => {
+    const classes = useStyles();
 
-      <div className="slideButtons">
-        <button className="btn btn-secondary" onClick={prevSlide}>
-          Prev Slide
-        </button>
-        <button className="btn btn-secondary" onClick={nextSlide}>
-          Next Slide
-        </button>
-      </div>
+    return (
+      <>
+        <div className={classes.players}>
+          {players.map(player => (
+            <PlayerScore
+              key={player.id}
+              player={player}
+              onAddPoints={addPointsToPlayer}
+            />
+          ))}
+        </div>
 
-      <div className="sounds">
-        <SoundBoard onPlaySound={playSound} />
-      </div>
-    </>
-  )
+        <div className={classes.slideButtons}>
+          <button className="btn btn-secondary" onClick={prevSlide}>
+            Prev Slide
+          </button>
+          <button className="btn btn-secondary" onClick={nextSlide}>
+            Next Slide
+          </button>
+        </div>
+
+        <div className={classes.sounds}>
+          <SoundBoard onPlaySound={playSound} />
+        </div>
+      </>
+    );
+  }
 );
 
 interface PlayerScoreProps {
@@ -81,10 +147,11 @@ interface PlayerScoreProps {
 }
 
 const PlayerScore = observer(({ player, onAddPoints }: PlayerScoreProps) => {
+  const classes = useStyles();
   const [customScore, setCustomScore] = useState(0);
 
   return (
-    <div className="player">
+    <div className={classes.player}>
       <div className="details">
         <div className="name">{player.displayName}</div>
         <div className="score">
