@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Player, PageProps } from "../model";
+import { SoundBoard } from "../components/SoundBoard";
 import { observer } from "mobx-react-lite";
 import "./ModeratorPage.scss";
 
@@ -7,7 +8,7 @@ export const ModeratorPage = observer(({ appState: state }: PageProps) => {
   return (
     <>
       <div className="players">
-        {state.players.map(player => (
+        {state.contestants.map(player => (
           <PlayerScore
             key={player.id}
             player={player}
@@ -17,8 +18,7 @@ export const ModeratorPage = observer(({ appState: state }: PageProps) => {
       </div>
 
       <div className="sounds">
-        <button className="btn btn-success">Right</button>
-        <button className="btn btn-danger">Wrong</button>
+        <SoundBoard />
       </div>
     </>
   );

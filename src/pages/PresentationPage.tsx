@@ -1,7 +1,33 @@
 import React from "react";
 import { Player, PageProps } from "../model";
-import { observer, useLocalStore } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+
+const fontFamilies = [
+  "Cedarville Cursive",
+  "Permanent Marker",
+  "Reenie Beanie",
+  "Rock Salt"
+  //"Ruge Boogie"
+];
+
+const getPlayerFontSize = (props: { player: Player }) => {
+  const name = (props && props.player && props.player.displayName) || "x";
+  return `${300 - name.length * 20}%`;
+};
+
+const getPlayerFontFamily = (props: { player: Player }) => {
+  const id = Number(
+    ((props && props.player && props.player.id) || "0").replace(/^\D+/g, "")
+  );
+  console.log(
+    props,
+    `id: ${id}; ${id % fontFamilies.length}; ${
+      fontFamilies[id % fontFamilies.length]
+    }`
+  );
+  return fontFamilies[id % fontFamilies.length];
+};
 
 const useStyles = createUseStyles({
   container: {
@@ -11,60 +37,62 @@ const useStyles = createUseStyles({
   currentSlide: {
     justifyContent: "center",
     alignItems: "center",
-    width: "calc(100% - 10rem)"
+    width: "calc(100% - 13rem)"
   },
   playersList: {
-    width: "10rem",
+    width: "13rem",
     flexDirection: "column",
     justifyContent: "space-between"
   },
   player: {
     flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: "#060CE9",
+    borderRadius: "10%",
+    padding: "1em 2em",
+    color: "#fff",
+
+    "& .name": {
+      fontFamily: getPlayerFontFamily,
+      fontSize: getPlayerFontSize
+    },
+
+    "& .score": {
+      fontSize: "150%"
+    }
   }
 });
 
-export const PresentationPage = observer(
-  ({ appState: { players } }: PageProps) => {
-    const classes = useStyles();
-    const state = useLocalStore(() => ({
-      currentSlide: 1,
-      slideCount: 36,
-      nextSlide() {
-        this.currentSlide = Math.min(this.slideCount, this.currentSlide + 1);
-      },
-      prevSlide() {
-        this.currentSlide = Math.max(1, this.currentSlide - 1);
+export const PresentationPage = observer(({ appState }: PageProps) => {
+  const classes = useStyles();
+  const { contestants, currentQuestion, prevSlide, nextSlide } = appState;
+
+  React.useEffect(() => {
+    const keyPressHandler = ({ key }: { key: string }): any => {
+      switch (key) {
+        case "ArrowLeft":
+          prevSlide();
+          break;
+        case "ArrowRight":
+          nextSlide();
+          break;
       }
-    }));
+    };
 
-    React.useEffect(() => {
-      const keyPressHandler = ({ key }: { key: string }): any => {
-        switch (key) {
-          case "ArrowLeft":
-            state.prevSlide();
-            break;
-          case "ArrowRight":
-            state.nextSlide();
-            break;
-        }
-      };
+    document.addEventListener("keydown", keyPressHandler);
+    return () => {
+      document.removeEventListener("keydown", keyPressHandler);
+    };
+  }, [nextSlide, prevSlide]);
 
-      document.addEventListener("keydown", keyPressHandler);
-      return () => {
-        document.removeEventListener("keydown", keyPressHandler);
-      };
-    }, [state]);
-
-    return (
-      <div className={classes.container}>
-        <CurrentSlide slide={state.currentSlide} />
-        <PlayersList players={players} />
-      </div>
-    );
-  }
-);
+  return (
+    <div className={classes.container}>
+      <CurrentSlide slide={currentQuestion} />
+      <PlayersList players={contestants} />
+    </div>
+  );
+});
 
 interface CurrentSlideProps {
   slide: number;
@@ -101,7 +129,7 @@ interface PlayerViewProps {
   player: Player;
 }
 const PlayerView = ({ player }: PlayerViewProps) => {
-  const classes = useStyles();
+  const classes = useStyles({ player });
   return (
     <div className={classes.player}>
       <div className="name">{player.displayName}</div>
