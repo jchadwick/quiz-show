@@ -19,7 +19,7 @@ const routes: {
 
 const App = observer(() => {
   const state = useLocalStore(() => new AppState());
-  const View = routes[state.view];
+  const View = routes[state.mode];
 
   return (
     <div className="App">

@@ -2,6 +2,7 @@ import React from "react";
 import { Player, PageProps } from "../model";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { SoundMixer, SoundMixerPlayer } from "../sounds";
 
 const fontFamilies = [
   "Cedarville Cursive",
@@ -17,15 +18,13 @@ const getPlayerFontSize = (props: { player: Player }) => {
 };
 
 const getPlayerFontFamily = (props: { player: Player }) => {
-  const id = Number(
-    ((props && props.player && props.player.id) || "0").replace(/^\D+/g, "")
-  );
-  console.log(
-    props,
-    `id: ${id}; ${id % fontFamilies.length}; ${
-      fontFamilies[id % fontFamilies.length]
-    }`
-  );
+  const playerId = props && props.player && props.player.id;
+
+  if (playerId == null) {
+    return null;
+  }
+
+  const id = Number(playerId.replace(/\D/g, ""));
   return fontFamilies[id % fontFamilies.length];
 };
 
@@ -48,10 +47,17 @@ const useStyles = createUseStyles({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#060CE9",
+    backgroundColor: (props: PlayerViewProps) =>
+      props && props.isBuzzedInPlayer ? "gold" : "#060CE9",
     borderRadius: "10%",
     padding: "1em 2em",
-    color: "#fff",
+    color: (props: PlayerViewProps) =>
+      props && props.isBuzzedInPlayer ? "#060CE9" : "#fff",
+
+    "&.buzzed": {
+      backgroundColor: "gold",
+      color: "#060CE9"
+    },
 
     "& .name": {
       fontFamily: getPlayerFontFamily,
@@ -66,10 +72,17 @@ const useStyles = createUseStyles({
 
 export const PresentationPage = observer(({ appState }: PageProps) => {
   const classes = useStyles();
-  const { contestants, currentQuestion, prevSlide, nextSlide } = appState;
+  const {
+    buzzedPlayerId,
+    players,
+    currentQuestionId: currentQuestion,
+    prevSlide,
+    nextSlide
+  } = appState;
 
   React.useEffect(() => {
     const keyPressHandler = ({ key }: { key: string }): any => {
+      console.log("key: ", key);
       switch (key) {
         case "ArrowLeft":
           prevSlide();
@@ -86,10 +99,19 @@ export const PresentationPage = observer(({ appState }: PageProps) => {
     };
   }, [nextSlide, prevSlide]);
 
+  const soundMixer = React.createRef<SoundMixerPlayer>();
+
+  React.useEffect(() => {
+    appState.subscribeToSoundEvents(sound => {
+      soundMixer.current && soundMixer.current.play(sound);
+    });
+  }, [appState, soundMixer]);
+
   return (
     <div className={classes.container}>
       <CurrentSlide slide={currentQuestion} />
-      <PlayersList players={contestants} />
+      <PlayersList players={players} buzzedPlayerId={buzzedPlayerId} />
+      <SoundMixer ref={soundMixer} />
     </div>
   );
 });
@@ -98,7 +120,7 @@ interface CurrentSlideProps {
   slide: number;
 }
 
-const CurrentSlide = ({ slide }: CurrentSlideProps) => {
+const CurrentSlide = observer(({ slide }: CurrentSlideProps) => {
   const classes = useStyles();
   return (
     <div className={classes.currentSlide}>
@@ -109,31 +131,39 @@ const CurrentSlide = ({ slide }: CurrentSlideProps) => {
       />
     </div>
   );
-};
+});
 
 interface PlayersListProps {
   players: Player[];
+  buzzedPlayerId: string;
 }
-const PlayersList = ({ players }: PlayersListProps) => {
-  const classes = useStyles();
-  return (
-    <div className={classes.playersList}>
-      {players.map(player => (
-        <PlayerView key={player.id} player={player} />
-      ))}
-    </div>
-  );
-};
+const PlayersList = observer(
+  ({ players, buzzedPlayerId }: PlayersListProps) => {
+    const classes = useStyles();
+    return (
+      <div className={classes.playersList}>
+        {players.map(player => (
+          <PlayerView
+            key={player.id}
+            player={player}
+            isBuzzedInPlayer={player.id === buzzedPlayerId}
+          />
+        ))}
+      </div>
+    );
+  }
+);
 
 interface PlayerViewProps {
   player: Player;
+  isBuzzedInPlayer: boolean;
 }
-const PlayerView = ({ player }: PlayerViewProps) => {
+const PlayerView = observer(({ player, isBuzzedInPlayer }: PlayerViewProps) => {
   const classes = useStyles({ player });
   return (
-    <div className={classes.player}>
+    <div className={classes.player + (isBuzzedInPlayer ? " buzzed" : "")}>
       <div className="name">{player.displayName}</div>
       <div className="score">{player.score}</div>
     </div>
   );
-};
+});
