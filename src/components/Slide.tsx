@@ -11,7 +11,7 @@ export const Slide = observer(({ className, slide }: SlideProps) => {
     <div className={className}>
       <img
         alt={`Slide${slide}.jpg`}
-        src={`/slides/Slide${slide}.jpg`}
+        src={`${process.env.PUBLIC_URL}/slides/Slide${slide}.jpg`}
         style={{ objectFit: "contain", maxWidth: "100%", maxHeight: "100%" }}
       />
     </div>

@@ -1,8 +1,8 @@
 export const SoundMap = {
-  Right: "/sfx/right.mp3",
-  Wrong: "/sfx/wrong.mp3",
-  Waiting: "/sfx/theme.mp3",
-  "Time's Up": "/sfx/times-up.mp3"
+  Right: `${process.env.PUBLIC_URL}/sfx/right.mp3`,
+  Wrong: `${process.env.PUBLIC_URL}/sfx/wrong.mp3`,
+  Waiting: `${process.env.PUBLIC_URL}/sfx/theme.mp3`,
+  "Time's Up": `${process.env.PUBLIC_URL}/sfx/times-up.mp3`
 };
 
 export type SoundName = keyof typeof SoundMap;
