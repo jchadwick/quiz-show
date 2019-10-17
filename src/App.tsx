@@ -22,7 +22,7 @@ const App = observer(() => {
   const state = useLocalStore(() => new AppState());
   const View = routes[state.mode];
 
-  return <ModeratorPage appState={state} />;
+  return <View appState={state} />;
 });
 
 export default App;

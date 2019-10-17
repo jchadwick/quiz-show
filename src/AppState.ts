@@ -170,6 +170,17 @@ export class AppState {
     this.updateGameSession({ players: toJS(players) as any });
   };
 
+  readonly backToGameSettings = () => this.setGameStatus("registering");
+
+  readonly setGameStatus = (status: GameStatus) => {
+    if (this.mode !== "moderator") return;
+    this.updateGameSession({ status });
+  };
+  readonly setAsPresenter = (player: Player) => {
+    if (this.mode !== "moderator") return;
+    this.updateGameSession({ presenter: player.id });
+  };
+
   readonly startGame = () => this.updateGameSession({ status: "active" });
 
   readonly isPlayer = (player: Player) =>

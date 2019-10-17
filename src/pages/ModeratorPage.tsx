@@ -66,6 +66,25 @@ const useStyles = createUseStyles({
   }
 });
 
+const userModeratorPageStyles = createUseStyles({
+  gameActions: {
+    marginTop: "2em"
+  },
+  player: {
+    display: "flex",
+    flexDirection: "row"
+  },
+  playerName: {
+    flexGrow: 1
+  },
+  playerActions: {
+    "& img": {
+      width: "1em",
+      height: "1em"
+    }
+  }
+});
+
 export const ModeratorPage = observer(({ appState }: PageProps) => {
   return appState.status === "registering" ? (
     <ModerateRegistrationView appState={appState} />
@@ -76,37 +95,69 @@ export const ModeratorPage = observer(({ appState }: PageProps) => {
 
 const ModerateRegistrationView = observer(
   ({
-    appState: { playerCandidates, isPlayer, toggleContestant, startGame }
-  }: PageProps) => (
-    <>
-      <h3>Select Contestants</h3>
-      <ul className="list-group">
-        {playerCandidates.map(user => (
-          <li
-            key={user.id}
-            className={
-              "list-group-item list-group-item-action " +
-              (isPlayer(user) ? " active" : "")
-            }
-            onClick={() => toggleContestant(user)}
-          >
-            {user.displayName} <small>({user.id.substr(0, 5)})</small>
-          </li>
-        ))}
-      </ul>
+    appState: {
+      playerCandidates,
+      isPlayer,
+      toggleContestant,
+      setAsPresenter,
+      startGame
+    }
+  }: PageProps) => {
+    const classes = userModeratorPageStyles();
 
-      <div>
-        <button className="btn btn-primary" onClick={() => startGame()}>
-          Start Game!
-        </button>
-      </div>
-    </>
-  )
+    return (
+      <>
+        <h3>Select Contestants</h3>
+        <ul className="list-group ">
+          {playerCandidates.map(user => (
+            <li
+              key={user.id}
+              className={
+                "list-group-item list-group-item-action " +
+                (isPlayer(user) ? " active" : "")
+              }
+            >
+              <div className={classes.player}>
+                <div
+                  className={classes.playerName}
+                  onClick={() => toggleContestant(user)}
+                >
+                  {user.displayName} <small>({user.id.substr(0, 5)})</small>
+                </div>
+                <div className={classes.playerActions}>
+                  <button
+                    onClick={() => setAsPresenter(user)}
+                    type="button"
+                    className="btn btn-secondary"
+                  >
+                    <img alt="Set as Presenter" src="/presenter.png" />
+                  </button>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className={classes.gameActions}>
+          <button className="btn btn-primary" onClick={() => startGame()}>
+            Start Game!
+          </button>
+        </div>
+      </>
+    );
+  }
 );
 
 const ModerateActiveGameView = observer(
   ({
-    appState: { players, addPointsToPlayer, playSound, prevSlide, nextSlide }
+    appState: {
+      backToGameSettings,
+      players,
+      addPointsToPlayer,
+      playSound,
+      prevSlide,
+      nextSlide
+    }
   }: PageProps) => {
     const classes = useStyles();
 
@@ -133,6 +184,16 @@ const ModerateActiveGameView = observer(
 
         <div className={classes.sounds}>
           <SoundBoard onPlaySound={playSound} />
+        </div>
+
+        <div>
+          <button
+            onClick={backToGameSettings}
+            type="button"
+            className="btn btn-warning"
+          >
+            Back to Game Settings
+          </button>
         </div>
       </>
     );
