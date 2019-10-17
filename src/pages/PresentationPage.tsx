@@ -37,12 +37,13 @@ const useStyles = createUseStyles({
   currentSlide: {
     justifyContent: "center",
     alignItems: "center",
-    width: "calc(100% - 13rem)"
+    width: "calc(100% - 15rem)"
   },
   playersList: {
-    width: "13rem",
+    width: "14rem",
+    marginRight: "1rem",
     flexDirection: "column",
-    justifyContent: "space-between"
+    justifyContent: "space-around"
   },
   player: {
     flexDirection: "column",
