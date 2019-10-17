@@ -3,6 +3,7 @@ import { Player, PageProps } from "../model";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { SoundMixer, SoundMixerPlayer } from "../sounds";
+import { Slide as CurrentSlide } from "../components/Slide";
 
 const fontFamilies = [
   "Cedarville Cursive",
@@ -109,26 +110,9 @@ export const PresentationPage = observer(({ appState }: PageProps) => {
 
   return (
     <div className={classes.container}>
-      <CurrentSlide slide={currentQuestion} />
+      <CurrentSlide className={classes.currentSlide} slide={currentQuestion} />
       <PlayersList players={players} buzzedPlayerId={buzzedPlayerId} />
       <SoundMixer ref={soundMixer} />
-    </div>
-  );
-});
-
-interface CurrentSlideProps {
-  slide: number;
-}
-
-const CurrentSlide = observer(({ slide }: CurrentSlideProps) => {
-  const classes = useStyles();
-  return (
-    <div className={classes.currentSlide}>
-      <img
-        alt={`Slide${slide}.jpg`}
-        src={`/slides/Slide${slide}.jpg`}
-        style={{ objectFit: "contain" }}
-      />
     </div>
   );
 });

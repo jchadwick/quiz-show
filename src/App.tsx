@@ -3,14 +3,15 @@ import { AnonymousPage } from "./pages/AnonymousPage";
 import { ContestantPage } from "./pages/ContestantPage";
 import { ModeratorPage } from "./pages/ModeratorPage";
 import { PresentationPage } from "./pages/PresentationPage";
+import { SplashPage } from "./pages/SplashPage";
 import { AppState } from "./AppState";
 import { useLocalStore, observer } from "mobx-react-lite";
-import "./App.scss";
 import { PageProps, PlayerMode } from "./model";
 
 const routes: {
   [key in PlayerMode]: FunctionComponent<PageProps>;
 } = {
+  initializing: SplashPage,
   contestant: ContestantPage,
   moderator: ModeratorPage,
   presenter: PresentationPage,
@@ -21,11 +22,7 @@ const App = observer(() => {
   const state = useLocalStore(() => new AppState());
   const View = routes[state.mode];
 
-  return (
-    <div className="App">
-      <View appState={state} />
-    </div>
-  );
+  return <ModeratorPage appState={state} />;
 });
 
 export default App;

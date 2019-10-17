@@ -6,7 +6,12 @@ export interface Player {
   score?: number;
 }
 
-export type PlayerMode = "contestant" | "moderator" | "presenter" | "spectator";
+export type PlayerMode =
+  | "initializing"
+  | "contestant"
+  | "moderator"
+  | "presenter"
+  | "spectator";
 
 export interface PageProps {
   appState: AppState;

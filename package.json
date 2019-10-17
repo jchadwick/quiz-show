@@ -1,23 +1,20 @@
 {
   "name": "quizshow",
   "version": "0.1.0",
+  "homepage": "http://www.jesschadwick.com/quiz-show/",
   "main": "build/server.js",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "npm run build && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -45,6 +42,7 @@
   "devDependencies": {
     "@types/react-jss": "^8.6.4",
     "firebase-tools": "^7.5.0",
+    "gh-pages": "^2.1.1",
     "npm-run-all": "^4.1.5"
   }
 }

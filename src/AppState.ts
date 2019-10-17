@@ -11,7 +11,7 @@ import firebase, { FirebaseUser } from "./firebase";
 import { MessageBus } from "./MessageBus";
 import { SoundName } from "./sounds";
 
-type GameStatus = "registering" | "active" | "done";
+type GameStatus = "initializing" | "registering" | "active" | "done";
 
 interface BuzzerMessage {
   playerId: string;
@@ -43,7 +43,7 @@ export class AppState {
   @observable buzzedPlayerId: string = null;
   @observable currentQuestionId: number = 1;
   @observable totalQuestions: number = 36;
-  @observable status: GameStatus = "registering";
+  @observable status: GameStatus = "initializing";
   @observable private presenterInitialized = false;
 
   @computed get buzzedPlayer(): Player {
@@ -59,7 +59,7 @@ export class AppState {
   }
 
   @computed get playerCandidates(): Player[] {
-    const specialUserIds = [this.presenter, this.moderator];
+    const specialUserIds = [this.moderator];
 
     return this.users
       .filter(x => !!x)
@@ -70,8 +70,8 @@ export class AppState {
 
   @computed
   get mode(): PlayerMode {
-    if (this.localPlayer.id === AppState.AnonymousUser.id) {
-      return "spectator";
+    if (this.status === "initializing") {
+      return "initializing";
     }
 
     if (this.localPlayer.id === this.presenter) {
@@ -234,11 +234,6 @@ export class AppState {
 
         if (player == null) {
           console.info(`Registering as new player...`);
-
-          this.playerDocument.set({ id: this.userId } as Player, {
-            merge: true
-          });
-
           return;
         }
 
@@ -253,6 +248,15 @@ export class AppState {
         });
       },
       error => alert(`Error retrieving user info: ${error}`)
+    );
+
+    this.playerDocument.set(
+      { id: this.userId, last_seen: Date.now() } as Player & {
+        last_seen: number;
+      },
+      {
+        merge: true
+      }
     );
   }
 
